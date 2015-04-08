@@ -1,0 +1,58 @@
+<html>
+<head>
+	<title>CS 106b Live Coding</title>
+	
+	<style type="text/css" media="screen">
+	  #editor {
+        /*position: absolute;*/
+        /*top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;*/
+        height: 100%;
+   	 }
+	</style>
+
+	<script src="//code.jquery.com/jquery-1.11.2.js"></script>
+
+	<script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/ace.js"></script>
+	<script src="/socket.io/socket.io.js"></script>
+
+	<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+	<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+
+	<script src="//cdnjs.cloudflare.com/ajax/libs/mousetrap/1.4.6/mousetrap.min.js"></script>
+</head>
+
+<body>
+	<div class="row">
+		<div class="col-xs-6" id="editor"></div>
+		<div class="col-xs-6" id="results">ss</div>
+	</div>
+
+	<script>
+		// Initialize ACE editor
+	    var editor = ace.edit("editor");
+	    editor.setTheme("ace/theme/monokai");
+	    editor.getSession().setMode("ace/mode/c_cpp");
+
+	    // Make socket connection
+	    var socket = io();
+
+	    Mousetrap.bind('ctrl+s', function(e) {
+		    if (e.preventDefault) e.preventDefault();
+		    else e.returnValue = false;
+		    
+		    console.log("Sending program to be run.");
+		    socket.emit("run", editor.getSession().getValue());
+
+		    return false;
+		});
+
+		socket.on("output", function(output) {
+			console.log(output);
+			$("#results").html(output);
+		});
+	</script>
+</body>
+</html>
