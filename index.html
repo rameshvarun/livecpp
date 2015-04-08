@@ -27,7 +27,7 @@
 <body>
 	<div class="row">
 		<div class="col-xs-6" id="editor"></div>
-		<div class="col-xs-6" id="results">ss</div>
+		<div class="col-xs-6" id="results"><div id="desc"></div></div>
 	</div>
 
 	<script>
@@ -35,7 +35,7 @@
 	    var editor = ace.edit("editor");
 	    editor.setTheme("ace/theme/monokai");
 	    editor.getSession().setMode("ace/mode/c_cpp");
-
+	    
 	    // Make socket connection
 	    var socket = io();
 
@@ -49,9 +49,9 @@
 		    return false;
 		});
 
-		socket.on("output", function(output) {
-			console.log(output);
-			$("#results").html(output);
+		socket.on("problem", function(problem) {
+			editor.getSession().setValue(problem.starter)
+			$("#desc").html(problem.desc);
 		});
 	</script>
 </body>
