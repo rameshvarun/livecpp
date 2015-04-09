@@ -79,6 +79,9 @@ io.on('connection', function(socket){
                 result.passed = (result.output.trim() == result.expected.trim());
                 callback(null, result);
               });
+
+              child.stdin.write(result.input);
+              child.stdin.end();
               
               // TODO: Pipe in input file
             });
