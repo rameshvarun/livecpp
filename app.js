@@ -35,18 +35,17 @@ io.on('connection', function(socket){
 		});
   	},
   	function(callback) {
-  		fs.readFile(path.join("problems", problem, "starter.cpp"), 'utf8', function read(err, data) {
+  		fs.readFile(path.join("problems", problem, "starter.cpp"), 'utf8', function(err, data) {
   			callback(err, data);
 		});
   	}
   ],
   function(err, results) {
   	socket.emit("problem", {
-		desc: markdown.toHTML(results[0]),
-		starter: results[1]
-	});
+		  desc: markdown.toHTML(results[0]),
+		  starter: results[1]
+	   });
   });
-
 	
 
   socket.on('run', function(code) {
@@ -55,12 +54,39 @@ io.on('connection', function(socket){
   	fs.writeFile("tmp/code.cpp", code, function(err) {
   		exec('g++ code.cpp -o code', { cwd: "./tmp" }, function (error, stdout, stderr) {
   			if(fs.existsSync("tmp/code.exe") || fs.existsSync("tmp/code")) {
-  				exec('code', { cwd: "./tmp" }, function (error, stdout, stderr) {
-  					console.log("Program output: " + stdout);
-  					socket.emit('output', stdout);
-  				});
+          async.map(ls('problems/' + problem + '/cases/*.in'), function(file, callback) {
+            var casename = path.parse(file).name;
+            var result = { name: casename };
 
-  				// TODO: Remove code executable
+
+            async.parallel([
+              function(input) { // Read in input file
+                fs.readFile(file, 'utf8', function(err, data) {
+                  input(null, data);
+                });
+              },
+              function(expectedoutput) { // Read in output file
+                fs.readFile(path.join(path.parse(file).dir, casename + ".out"), 'utf8', function(err, data) {
+                  expectedoutput(null, data);
+                });
+              }
+            ], function(err, files) {
+              result.input = files[0];
+              result.expected = files[1];
+
+              var child = exec('code', { cwd: "./tmp" }, function (error, stdout, stderr) {
+                result.output = stdout;
+                result.passed = (result.output.trim() == result.expected.trim());
+                callback(null, result);
+              });
+              
+              // TODO: Pipe in input file
+            });
+          }, function(err, results) {
+            socket.emit('results', results);
+
+            // TODO: Remove code executable
+          });
   			} else {
   				// TODO: Compile time error
   				console.log("Compile Error: " + stderr);
