@@ -10,6 +10,7 @@
         bottom: 0;
         left: 0;*/
         height: 100%;
+        border-right: 1px solid #aaaaaa;
    	 }
 	</style>
 
@@ -58,19 +59,29 @@
 	    var editor = ace.edit("editor");
 	    editor.setTheme("ace/theme/monokai");
 	    editor.getSession().setMode("ace/mode/c_cpp");
+	    editor.setShowPrintMargin(false);
 	    
 	    // Make socket connection
 	    var socket = io();
 
-	    Mousetrap.bind('ctrl+s', function(e) {
+	    Mousetrap.bind(['ctrl+s','command+s'], function(e) {
 		    if (e.preventDefault) e.preventDefault();
 		    else e.returnValue = false;
-		    
 		    console.log("Sending program to be run.");
 		    socket.emit("run", editor.getSession().getValue());
 
 		    return false;
 		});
+
+		//ACE Editor key bindings
+		editor.commands.addCommand({
+			name: "save",
+			bindKey: {win: "Ctrl-s", mac: "Command-s"},
+			exec: function(editor){
+				console.log("Editor - Sending program to be run.");
+		    	socket.emit("run", editor.getSession().getValue());
+			}
+		})
 
 		socket.on("problem", function(problem) {
 			editor.getSession().setValue(problem.starter)

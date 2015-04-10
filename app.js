@@ -52,6 +52,7 @@ io.on('connection', function(socket){
   	// Hash code to an id
   	
   	fs.writeFile("tmp/code.cpp", code, function(err) {
+		// TODO: make cwd platform-independent
   		exec('g++ code.cpp -o code', { cwd: "./tmp" }, function (error, stdout, stderr) {
   			if(fs.existsSync("tmp/code.exe") || fs.existsSync("tmp/code")) {
           async.map(ls('problems/' + problem + '/cases/*.in'), function(file, callback) {
@@ -74,7 +75,7 @@ io.on('connection', function(socket){
               result.input = files[0];
               result.expected = files[1];
 
-              var child = exec('code', { cwd: "./tmp" }, function (error, stdout, stderr) {
+              var child = exec('./code', { cwd: "./tmp" }, function (error, stdout, stderr) {
                 result.output = stdout;
                 result.passed = (result.output.trim() == result.expected.trim());
                 callback(null, result);
