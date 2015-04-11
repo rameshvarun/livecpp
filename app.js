@@ -25,8 +25,8 @@ nunjucks.configure('templates', {
     tags: {
     	variableStart: '[[',
     	variableEnd: ']]',
-    	blockStart: '<%',
-    	blockEnd: '%>',
+    	blockStart: '[%',
+    	blockEnd: '%]',
     	commentStart: '<#',
     	commentEnd: '#>'
     }
@@ -36,40 +36,46 @@ app.use(express.static('public'));
 app.get('/:problem', function(req, res){
 	res.render('index.html', {problem: req.params.problem});
 });
+app.get('/', function(req, res){
+	res.render('list.html', {problems: ls('problems/')});
+})
 
 server.listen(80, 'localhost', function() {
 	console.log("Listening on localhost:80...");
 });
 
-var problem = "isbalanced";
-
 io.on('connection', function(socket) {
 	console.log('A user connected');
 
-	// Load README.md, starter.cpp, and solution.cpp in parallel
-	async.parallel([function(callback) {
-		fs.readFile(path.join("problems", problem, "README.md"), 'utf8', function read(err, data) {
-			callback(err, data);
-		});
-	}, function(callback) {
-		fs.readFile(path.join("problems", problem, "starter.cpp"), 'utf8', function(err, data) {
-			callback(err, data);
-		});
-	}, function(callback) {
-		fs.readFile(path.join("problems", problem, "solution.cpp"), 'utf8', function(err, data) {
-			callback(err, data);
-		})
-	}
-	], function(err, results) {
-		// Send files back to client
-		socket.emit("problem", {
-			desc: markdown.toHTML(results[0]),
-			starter: results[1],
-			solution: results[2]
+	socket.on('get_problem', function(problem){
+		// Load README.md, starter.cpp, and solution.cpp in parallel
+		async.parallel([function(callback) {
+			fs.readFile(path.join("problems", problem, "README.md"), 'utf8', function read(err, data) {
+				callback(err, data);
+			});
+		}, function(callback) {
+			fs.readFile(path.join("problems", problem, "starter.cpp"), 'utf8', function(err, data) {
+				callback(err, data);
+			});
+		}, function(callback) {
+			fs.readFile(path.join("problems", problem, "solution.cpp"), 'utf8', function(err, data) {
+				callback(err, data);
+			})
+		}
+		], function(err, results) {
+			// Send files back to client
+			socket.emit("problem", {
+				desc: markdown.toHTML(results[0]),
+				starter: results[1],
+				solution: results[2]
+			});
 		});
 	});
+	
+	socket.on('run', function(obj) {
 
-	socket.on('run', function(code) {
+		var code = obj.code;
+		var problem = obj.problem;
 		// Hash code to an id
 		var hash = crypto.createHash('md5').update(code).digest('hex');
 		var code_path = path.join("tmp", hash + ".cpp");

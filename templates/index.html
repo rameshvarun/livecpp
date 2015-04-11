@@ -107,9 +107,10 @@
 	    
 	    // Make socket connection
 	    var socket = io();
+	    socket.emit("get_problem", problem);
 
 	    function run_program(){
-	    	socket.emit("run", editor.getSession().getValue());
+	    	socket.emit("run", {code: editor.getSession().getValue(), problem: problem});
 	    	$("#results").html("<div class=\"text-center\"><img src=\"bubbles.svg\" alt=\"Running code...\" /></div>");
 	    }
 
