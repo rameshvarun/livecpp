@@ -96,11 +96,16 @@
 	    // Make socket connection
 	    var socket = io();
 
+	    function run_program(){
+	    	socket.emit("run", editor.getSession().getValue());
+	    	$("#results").html("<div class=\"text-center\"><img src=\"bubbles.svg\" alt=\"Running code...\" /></div>");
+	    }
+
 	    Mousetrap.bind(['ctrl+s','command+s'], function(e) {
 		    if (e.preventDefault) e.preventDefault();
 		    else e.returnValue = false;
 		    console.log("Sending program to be run.");
-		    socket.emit("run", editor.getSession().getValue());
+		    run_program();
 
 		    return false;
 		});
@@ -110,8 +115,8 @@
 			name: "save",
 			bindKey: {win: "Ctrl-s", mac: "Command-s"},
 			exec: function(editor){
-				console.log("Editor - Sending program to be run.");
-		    	socket.emit("run", editor.getSession().getValue());
+				console.log("editor - sending program to be run.");
+		    	run_program();
 			}
 		})
 
@@ -121,12 +126,12 @@
 			starter = problem.starter
 			editor.getSession().setValue(starter);
 			$("#desc").html(problem.desc);
-			socket.emit("run", editor.getSession().getValue());
+			run_program();
 		});
 
 		socket.on("solution", function(problem) {
 			editor.getSession().setValue(problem.solution);
-			socket.emit("run", editor.getSession().getValue());
+			run_program();
 		})
 
 		var template = Handlebars.compile($("#results-template").html());
@@ -150,13 +155,13 @@
 		//solution button
 		$("#show-soln-btn").click(function(){
 			editor.getSession().setValue(solution);
-			socket.emit("run", editor.getSession().getValue());
+			run_program();
 		})
 
 		//reset to starter code
 		$("#reset-btn").click(function(){
 			editor.getSession().setValue(starter);
-			socket.emit("run", editor.getSession().getValue());
+			run_program();
 		})
 
 		//unfocus buttons after press
