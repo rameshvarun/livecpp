@@ -6,6 +6,11 @@
 	<link href="stanford-favicon.png" type="image/png" rel="icon" />
 	
 	<style>
+
+		html {
+			overflow-x: hidden;
+		}
+
 		#editor {
 			/*position: absolute;*/
 			/*top: 0;
@@ -29,6 +34,10 @@
 		#buttons {
 			padding-bottom: 20px;
 			padding-top: 13px;
+		}
+
+		.btn#auth-btn {
+			padding: 9px 12px;
 		}
 
 	</style>
@@ -96,6 +105,12 @@
 	</script>
 
 	<script>
+
+		//enable bootstrap popovers
+		$(function () {
+  			$('[data-toggle="popover"]').popover()
+		})
+
 		var problem = '[[problem]]';
 
 		// Initialize ACE editor
@@ -166,8 +181,21 @@
 		});
 
 		//solution button
+		// $("#show-soln-btn").popover({
+		// 	//data-container="body" data-toggle="popover" ata-content=""
+		// 	html: true,
+		// 	title: 'Authenticate',
+		// 	placement: 'bottom',
+		// 	content: '<form class="form-inline"><input id="auth-value" type="password" class="form-control"/><button id="auth-btn" type="button" class="btn btn-danger"><span class="glyphicon glyphicon-eye-open"></span></button></form>'
+		// }).parent().delegate("button#auth-btn", "click", function(){
+		// 	var guess = $("#auth-value")[0].value;
+		// 	editor.getSession().setValue(solution);
+		// 	run_program();
+		// })
+
+		//reset to starter code
 		$("#show-soln-btn").click(function(){
-			editor.getSession().setValue(solution);
+			editor.getSession().setValue(starter);
 			run_program();
 		})
 
@@ -178,9 +206,13 @@
 		})
 
 		//unfocus buttons after press
-		$(".btn").mouseup(function(){
+		$("#reset-btn").mouseup(function(){
     		$(this).blur();
 		})
+
+		if(window.location.href.endsWith('#')){
+			$('#show-soln-btn').hide();
+		}
 
 	</script>
 </body>
