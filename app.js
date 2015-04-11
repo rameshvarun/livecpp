@@ -8,6 +8,7 @@ var async = require('async');
 var os = require('os');
 var crypto = require('crypto');
 var express = require('express');
+var nunjucks = require('nunjucks');
 
 if (!fs.existsSync("tmp")) {
 	fs.mkdirSync("tmp");
@@ -17,7 +18,24 @@ var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 
+nunjucks.configure('templates', {
+    autoescape: true,
+    express: app,
+    watch: true,
+    tags: {
+    	variableStart: '[[',
+    	variableEnd: ']]',
+    	blockStart: '<%',
+    	blockEnd: '%>',
+    	commentStart: '<#',
+    	commentEnd: '#>'
+    }
+});
+
 app.use(express.static('public'));
+app.get('/:problem', function(req, res){
+	res.render('index.html', {problem: req.params.problem});
+});
 
 server.listen(80, 'localhost', function() {
 	console.log("Listening on localhost:80...");
