@@ -59,7 +59,7 @@ io.on('connection', function(socket) {
 
 		fs.writeFile(code_path, code, function(err) {
 			// Compile executable
-			exec('g++ ' + hash + '.cpp -o ' + hash, {
+			exec('g++ -std=c++11 ' + hash + '.cpp -o ' + hash, {
 				cwd: "./tmp"
 			}, function(error, stdout, stderr) {
 				if (fs.existsSync(exec_path + ".exe") || fs.existsSync(exec_path)) {
