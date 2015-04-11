@@ -32,21 +32,26 @@ io.on('connection', function(socket){
   	function(callback) {
   		fs.readFile(path.join("problems", problem, "README.md"), 'utf8', function read(err, data) {
   			callback(err, data);
-		});
+		  });
   	},
   	function(callback) {
   		fs.readFile(path.join("problems", problem, "starter.cpp"), 'utf8', function(err, data) {
   			callback(err, data);
-		});
-  	}
+		  });
+  	},
+    function(callback) {
+      fs.readFile(path.join("problems", problem, "solution.cpp"), 'utf8', function(err, data) {
+        callback(err, data);
+      })
+    }
   ],
   function(err, results) {
   	socket.emit("problem", {
 		  desc: markdown.toHTML(results[0]),
-		  starter: results[1]
+		  starter: results[1],
+      solution: results[2]
 	   });
   });
-	
 
   socket.on('run', function(code) {
   	// Hash code to an id
@@ -75,7 +80,10 @@ io.on('connection', function(socket){
               result.input = files[0];
               result.expected = files[1];
 
-              var child = exec('./code', { cwd: "./tmp" }, function (error, stdout, stderr) {
+              var windows = navigator.appVersion.indexOf("Win") != -1;
+              var command = windows ? 'code' : './code';
+
+              var child = exec(command, { cwd: "./tmp" }, function (error, stdout, stderr) {
                 result.output = stdout;
                 result.passed = (result.output.trim() == result.expected.trim());
                 callback(null, result);

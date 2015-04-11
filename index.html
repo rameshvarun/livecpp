@@ -1,17 +1,33 @@
 <html>
 <head>
-	<title>CS 106b Live Coding</title>
+	<title>CS 106B Live Coding</title>
 	
-	<style type="text/css" media="screen">
-	  #editor {
-        /*position: absolute;*/
-        /*top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;*/
-        height: 100%;
-        border-right: 1px solid #aaaaaa;
-   	 }
+	<style>
+		#editor {
+			/*position: absolute;*/
+			/*top: 0;
+			right: 0;
+			bottom: 0;
+			left: 0;*/
+			height: 100%;
+			border-right: 1px solid #aaaaaa;
+		}
+
+		#problem {
+			height: 100%;
+			overflow: scroll;
+			overflow-x: hidden;
+		}
+
+		img {
+			max-width: 100%;
+		}
+
+		#buttons {
+			padding-bottom: 20px;
+			padding-top: 13px;
+		}
+
 	</style>
 
 	<script src="//code.jquery.com/jquery-1.11.2.js"></script>
@@ -32,6 +48,10 @@
 		<div class="col-xs-6" id="editor"></div>
 		<div class="col-xs-6" id="problem">
 			<div id="desc"></div>
+			<div id="buttons" class="text-center">
+				<button id="reset-btn" type="button" class="btn btn-default">Reset</button>
+				<button id="show-soln-btn" type="button" class="btn btn-default">Show Solution</button>
+			</div>
 			<div id="results"></div>
 		</div>
 	</div>
@@ -83,10 +103,19 @@
 			}
 		})
 
+		var solution, starter;
 		socket.on("problem", function(problem) {
-			editor.getSession().setValue(problem.starter)
+			solution = problem.solution;
+			starter = problem.starter
+			editor.getSession().setValue(starter);
 			$("#desc").html(problem.desc);
+			socket.emit("run", editor.getSession().getValue());
 		});
+
+		socket.on("solution", function(problem) {
+			editor.getSession().setValue(problem.solution);
+			socket.emit("run", editor.getSession().getValue());
+		})
 
 		var template = Handlebars.compile($("#results-template").html());
 		socket.on("results", function(results) {
@@ -98,6 +127,24 @@
 				$(this).parent().children(".panel-body").slideToggle();
 			});
 		});
+
+		//solution button
+		$("#show-soln-btn").click(function(){
+			editor.getSession().setValue(solution);
+			socket.emit("run", editor.getSession().getValue());
+		})
+
+		//reset to starter code
+		$("#reset-btn").click(function(){
+			editor.getSession().setValue(starter);
+			socket.emit("run", editor.getSession().getValue());
+		})
+
+		//unfocus buttons after press
+		$(".btn").mouseup(function(){
+    		$(this).blur();
+		})
+
 	</script>
 </body>
 </html>
