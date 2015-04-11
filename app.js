@@ -8,9 +8,10 @@ var markdown = require("markdown").markdown;
 var async = require('async');
 var os = require('os')
 
+var crypto = require('crypto');
 
 if (!fs.existsSync("tmp")) {
-	fs.mkdirSync("tmp")
+	fs.mkdirSync("tmp");
 }
 
 var server = http.createServer(function(req, res) {
@@ -34,6 +35,7 @@ var problem = "isbalanced";
 io.on('connection', function(socket) {
 	console.log('A user connected');
 
+	// Load README.md, starter.cpp, and solution.cpp in parallel
 	async.parallel([function(callback) {
 		fs.readFile(path.join("problems", problem, "README.md"), 'utf8', function read(err, data) {
 			callback(err, data);
@@ -48,6 +50,7 @@ io.on('connection', function(socket) {
 		})
 	}
 	], function(err, results) {
+		// Send files back to client
 		socket.emit("problem", {
 			desc: markdown.toHTML(results[0]),
 			starter: results[1],
@@ -57,18 +60,21 @@ io.on('connection', function(socket) {
 
 	socket.on('run', function(code) {
 		// Hash code to an id
+		var hash = crypto.createHash('md5').update(code).digest('hex');
+		var code_path = path.join("tmp", hash + ".cpp");
+		var exec_path = path.join("tmp", hash);
 
-		fs.writeFile("tmp/code.cpp", code, function(err) {
-			exec('g++ code.cpp -o code', {
+		fs.writeFile(code_path, code, function(err) {
+			// Compile executable
+			exec('g++ ' + hash + '.cpp -o ' + hash, {
 				cwd: "./tmp"
 			}, function(error, stdout, stderr) {
-				if (fs.existsSync("tmp/code.exe") || fs.existsSync("tmp/code")) {
+				if (fs.existsSync(exec_path + ".exe") || fs.existsSync(exec_path)) {
 					async.map(ls('problems/' + problem + '/cases/*.in'), function(file, callback) {
 						var casename = path.parse(file).name;
 						var result = {
 							name: casename
 						};
-
 
 						async.parallel([function(input) { // Read in input file
 							fs.readFile(file, 'utf8', function(err, data) {
@@ -83,8 +89,9 @@ io.on('connection', function(socket) {
 							result.input = files[0];
 							result.expected = files[1];
 
+							// Platform independent exec
 							var windows = os.platform().indexOf("win32") != -1 || os.platform().indexOf("win64") != -1;
-							var command = windows ? 'code' : './code';
+							var command = windows ? hash : './' + hash;
 
 							var child = exec(command, {
 								cwd: "./tmp"
@@ -94,10 +101,9 @@ io.on('connection', function(socket) {
 								callback(null, result);
 							});
 
+							// Pipe input in to stdin
 							child.stdin.write(result.input);
 							child.stdin.end();
-
-							// TODO: Pipe in input file
 						});
 					}, function(err, results) {
 						socket.emit('results', results);
