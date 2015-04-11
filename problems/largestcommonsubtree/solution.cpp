@@ -56,19 +56,12 @@ pair<int,int> check_hashes(list<pair<int, node*>> hashes[], node* start) {
 
     unsigned int hash = start->value + PRIME*l.second + PRIME*PRIME*r.second;
     list<pair<int, node*>> bucket = hashes[hash % NUM_BUCKETS];
-    if(bucket.size() == 0) { // No matching subtrees
-    	return pair<int,int>(max(l.first, r.first), hash);
-    } else if(bucket.size() == 1) { // One subtree with same hash
-    	return pair<int, int>(bucket.front().first, hash);
-    } else { // Rare but possible: two subtrees have same hash
-    	for(auto& entry : bucket) {
-    		if(tree_equal(start, entry.second))
-    			return pair<int, int>(entry.first, hash);
-    	}
 
-    	cout << "Something has gone wrong." << endl;
-    	abort(); 
-    }
+    for(auto& entry : bucket)
+    	if(tree_equal(start, entry.second))
+    		return pair<int, int>(entry.first, hash);
+
+    return pair<int,int>(max(l.first, r.first), hash);
 }
 
 // Return the size of largest common subtree
