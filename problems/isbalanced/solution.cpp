@@ -31,7 +31,11 @@ int main() {
 
 // Return whether or not the tree is balanced.
 bool isbalanced(node* root) {
-	return abs(height(root->left) - height(root->right)) <= 1;
+
+	if(root == NULL) return true;
+
+	bool similar_height = abs(height(root->left) - height(root->right)) <= 1;
+	return isbalanced(root->left) && isbalanced(root->right) && similar_height;
 }
 
 int height(node* root){
