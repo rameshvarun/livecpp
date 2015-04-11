@@ -8,6 +8,7 @@ var markdown = require("markdown").markdown;
 var async = require('async');
 var os = require('os')
 
+
 var crypto = require('crypto');
 
 if (!fs.existsSync("tmp")) {
@@ -93,11 +94,14 @@ io.on('connection', function(socket) {
 							var windows = os.platform().indexOf("win32") != -1 || os.platform().indexOf("win64") != -1;
 							var command = windows ? hash : './' + hash;
 
+							var start_time = new Date().getTime();
 							var child = exec(command, {
 								cwd: "./tmp"
 							}, function(error, stdout, stderr) {
 								result.output = stdout;
 								result.passed = (result.output.trim() == result.expected.trim());
+								result.time = new Date().getTime() - start_time;
+
 								callback(null, result);
 							});
 
