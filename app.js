@@ -1,31 +1,23 @@
 require('shelljs/global')
 
-var http = require('http');
 var fs = require('fs');
 var path = require('path');
 var exec = require('child_process').exec;
 var markdown = require("markdown").markdown;
 var async = require('async');
-var os = require('os')
-
-
+var os = require('os');
 var crypto = require('crypto');
+var express = require('express');
 
 if (!fs.existsSync("tmp")) {
 	fs.mkdirSync("tmp");
 }
 
-var server = http.createServer(function(req, res) {
-	fs.readFile('index.html', function(err, html) {
-		res.writeHeader(200, {
-			"Content-Type": "text/html"
-		});
-		res.write(html);
-		res.end();
-	});
-});
-
+var app = express();
+var server = require('http').Server(app);
 var io = require('socket.io')(server);
+
+app.use(express.static('public'));
 
 server.listen(80, 'localhost', function() {
 	console.log("Listening on localhost:80...");
