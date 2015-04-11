@@ -1,3 +1,8 @@
 # Determine if a Binary Tree is Balanced
 
-![](http://scienceblogs.com/goodmath/wp-content/blogs.dir/476/files/2012/04/i-8908e462401873fbddd042a25133f1fd-unbalanced-trees.jpg)
+![](http://i.imgur.com/u9fP56X.jpg)
+
+A tree is balanced if both its left and right subtrees are also balanced trees whose heights differ by _at most_ 1. An empty (`NULL`) tree is balanced by definition.
+
+####Instructions
+Write a function `isbalanced` that takes in a pointer to the root of a tree and returns a boolean value, `true` if the given tree is balanced, `false` otherwise.
