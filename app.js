@@ -6,6 +6,7 @@ var path = require('path');
 var exec = require('child_process').exec;
 var markdown = require( "markdown" ).markdown;
 var async = require('async');
+var os = require('os')
 
 if(!fs.existsSync("tmp")) { fs.mkdirSync("tmp") };
 
@@ -80,7 +81,7 @@ io.on('connection', function(socket){
               result.input = files[0];
               result.expected = files[1];
 
-              var windows = navigator.appVersion.indexOf("Win") != -1;
+              var windows = os.platform().indexOf("win32") != -1 || os.platform().indexOf("win64") != -1;
               var command = windows ? 'code' : './code';
 
               var child = exec(command, { cwd: "./tmp" }, function (error, stdout, stderr) {
