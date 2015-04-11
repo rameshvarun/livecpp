@@ -74,6 +74,17 @@
 		{{/each}}
 	</script>
 
+	<script id="compile-error-template" type="text/x-handlebars-template">
+		<div class="panel panel-danger">
+			<div class="panel-heading">
+				<h3 class="panel-title">Compile Error</h3>
+			</div>
+			<div class="panel-body">
+				<pre><code>{{error}}</code></pre>
+			</div>
+		</div>
+	</script>
+
 	<script>
 		// Initialize ACE editor
 	    var editor = ace.edit("editor");
@@ -127,6 +138,13 @@
 			$(".panel-heading").click(function() {
 				$(this).parent().children(".panel-body").slideToggle();
 			});
+		});
+
+		var error_template = Handlebars.compile($("#compile-error-template").html());
+		socket.on("compile_error", function(stderr) {
+			$("#results").html(error_template({
+				error: stderr
+			}));
 		});
 
 		//solution button

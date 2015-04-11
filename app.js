@@ -101,18 +101,14 @@ io.on('connection', function(socket) {
 								callback(null, result);
 							});
 
-							// Pipe input in to stdin
 							child.stdin.write(result.input);
 							child.stdin.end();
 						});
 					}, function(err, results) {
 						socket.emit('results', results);
-
-						// TODO: Remove code executable
 					});
 				} else {
-					// TODO: Compile time error
-					console.log("Compile Error: " + stderr);
+          socket.emit("compile_error", stderr);
 				}
 			});
 		});
