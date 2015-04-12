@@ -34,7 +34,9 @@ nunjucks.configure('templates', {
 
 app.use(express.static('public'));
 app.get('/:problem', function(req, res){
-	res.render('index.html', {problem: req.params.problem});
+	res.render('index.html', {
+		problem: req.params.problem
+	});
 });
 app.get('/', function(req, res){
 	res.render('list.html', {problems: ls('problems/')});

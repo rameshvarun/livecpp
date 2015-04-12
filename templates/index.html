@@ -40,6 +40,10 @@
 			padding: 9px 12px;
 		}
 
+		#show-soln-btn {
+			display: none;
+		}
+
 	</style>
 
 	<script src="//code.jquery.com/jquery-1.11.2.js"></script>
@@ -58,6 +62,13 @@
 		var TogetherJSConfig_dontShowClicks = true;
 		var TogetherJSConfig_enableShortcut = true;
 		var TogetherJSConfig_disableWebRTC = true;
+		TogetherJSConfig_on_ready = function () {
+			var session = TogetherJS.require('session');
+			console.log(session);
+			if(!session.isClient){
+				$('#show-soln-btn').show();
+			}
+		};
 	</script>
 	<script src="https://togetherjs.com/togetherjs-min.js"></script>
 </head>
@@ -107,9 +118,9 @@
 	<script>
 
 		//enable bootstrap popovers
-		$(function () {
-  			$('[data-toggle="popover"]').popover()
-		})
+		// $(function () {
+  		// 		$('[data-toggle="popover"]').popover()
+		// })
 
 		var problem = '[[problem]]';
 
@@ -193,7 +204,6 @@
 		// 	run_program();
 		// })
 
-		//reset to starter code
 		$("#show-soln-btn").click(function(){
 			editor.getSession().setValue(solution);
 			run_program();
@@ -209,10 +219,6 @@
 		$("#reset-btn").mouseup(function(){
     		$(this).blur();
 		})
-
-		if(window.location.href.endsWith('#')){
-			$('#show-soln-btn').hide();
-		}
 
 	</script>
 </body>
