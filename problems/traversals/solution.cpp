@@ -54,7 +54,7 @@ BinaryTree::BinaryTree(TreeNode* root){
  */
 
 void BinaryTree::preorder_traversal(){
-	cout << "Pre-order traversal: ";
+	cout << "Pre-order traversal:  ";
     preorder_helper(root);
 	cout << endl;
 }
@@ -67,7 +67,7 @@ void BinaryTree::preorder_helper(TreeNode* node){
 }
 
 void BinaryTree::inorder_traversal(){
-	cout << "In-order traversal: ";
+	cout << "In-order traversal:   ";
     inorder_helper(root);
 	cout << endl;
 }

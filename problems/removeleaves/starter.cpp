@@ -11,9 +11,10 @@ struct TreeNode {
 class BinaryTree {
 	public:
 		BinaryTree(TreeNode* root);
+		void printTree();
+		void printTree(TreeNode* node);
 
-		int height();
-		int height(TreeNode* node);
+		void removeLeaves();
 
 	private:
 		TreeNode* root; //NULL if empty
@@ -37,9 +38,24 @@ BinaryTree::BinaryTree(TreeNode* root){
 	this->root = root;
 }
 
+void BinaryTree::printTree(){
+	printTree(root);
+}
+
+void BinaryTree::printTree(TreeNode *node){
+	if(node == NULL){
+		cout << "-1 ";
+	}else{
+		cout << node->data << " ";
+    	printTree(node->left);
+    	printTree(node->right);
+	}
+}
+
 int main() {
 	BinaryTree tree(readTree());
-	cout << tree.height() << endl;
+	tree.removeLeaves();
+	tree.printTree();
 }
 
 /*
@@ -48,11 +64,7 @@ int main() {
  * vv Section problem (important!)   vv
  */
 
-int BinaryTree::height(){
-	return height(root);
-}
-
-int BinaryTree::height(TreeNode* node){
-    if(node == NULL) return 0;
-    return 1 + max(height(node->left), height(node->right));
+// Return whether or not the tree is balanced.
+void BinaryTree::removeLeaves(){
+	
 }

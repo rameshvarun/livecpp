@@ -11,11 +11,11 @@ struct TreeNode {
 class BinaryTree {
 	public:
 		BinaryTree(TreeNode* root);
+		void printTree();
+		void printTree(TreeNode* node);
 
-		bool isBalanced();
-		int height();
-		int height(TreeNode* node);
-
+		void removeLeaves();
+		void removeLeaves(TreeNode*& node);
 	private:
 		TreeNode* root; //NULL if empty
 };
@@ -38,18 +38,24 @@ BinaryTree::BinaryTree(TreeNode* root){
 	this->root = root;
 }
 
-int BinaryTree::height(){
-	return height(root);
+void BinaryTree::printTree(){
+	printTree(root);
 }
 
-int BinaryTree::height(TreeNode* node){
-    if(node == NULL) return 0;
-    return 1 + max(height(node->left), height(node->right));
+void BinaryTree::printTree(TreeNode *node){
+	if(node == NULL){
+		cout << "-1 ";
+	}else{
+		cout << node->data << " ";
+    	printTree(node->left);
+    	printTree(node->right);
+	}
 }
 
 int main() {
 	BinaryTree tree(readTree());
-	cout << boolalpha << tree.isBalanced() << noboolalpha;
+	tree.removeLeaves();
+	tree.printTree();
 }
 
 /*
@@ -59,6 +65,18 @@ int main() {
  */
 
 // Return whether or not the tree is balanced.
-bool BinaryTree::isBalanced(){
-	return false;
+void BinaryTree::removeLeaves(){
+	removeLeaves(root);
+}
+
+void BinaryTree::removeLeaves(TreeNode*& node){
+	if(node != NULL){
+		if(node->left == NULL && node->right == NULL){
+			delete node;
+			node = NULL;
+		} else {
+			removeLeaves(node->left);
+			removeLeaves(node->right);
+		}
+	}
 }

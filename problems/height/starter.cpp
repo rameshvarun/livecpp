@@ -32,13 +32,13 @@ TreeNode* readTree() {
 	return n;
 }
 
+BinaryTree::BinaryTree(TreeNode* root){
+	this->root = root;
+}
+
 int main() {
 	BinaryTree tree(readTree());
 	cout << tree.height() << endl;
-}
-
-BinaryTree::BinaryTree(TreeNode* root){
-	this->root = root;
 }
 
 /*
@@ -48,5 +48,5 @@ BinaryTree::BinaryTree(TreeNode* root){
  */
 
 int BinaryTree::height(){
-	return -1;
+	return 0;
 }

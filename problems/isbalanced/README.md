@@ -5,4 +5,4 @@
 A tree is balanced if both its left and right subtrees are also balanced trees whose heights differ by _at most_ 1. An empty (`NULL`) tree is balanced by definition.
 
 ####Instructions
-Write a function `isbalanced` that takes in a pointer to the root of a tree and returns a boolean value, `true` if the given tree is balanced, `false` otherwise.
+Write a function `isBalanced` that returns a boolean value, `true` if the given tree is balanced, `false` otherwise. The function should return `true` if the tree is empty.
