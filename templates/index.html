@@ -97,6 +97,9 @@
 				</div>
 				<div class="panel-body" hidden>
 					Input: <pre><code>{{input}}</code></pre>
+					{{#if extra}}
+						<pre><code>{{extra}}</code></pre>
+					{{/if}}
 					Expected Output: <pre><code>{{expected}}</code></pre>
 					Output: <pre><code>{{output}}</code></pre>
 				</div>

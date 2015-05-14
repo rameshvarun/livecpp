@@ -99,14 +99,24 @@ io.on('connection', function(socket) {
 							fs.readFile(file, 'utf8', function(err, data) {
 								input(null, data);
 							});
+						}, function(extra) { // Read in the extra input file (for comments, etc.)
+							fs.readFile(path.join(path.parse(file).dir, casename + ".in.extra"), 'utf8', function(err, data) {
+								extra(null, data);
+							});
 						}, function(expectedoutput) { // Read in output file
 							fs.readFile(path.join(path.parse(file).dir, casename + ".out"), 'utf8', function(err, data) {
 								expectedoutput(null, data);
 							});
 						}
 						], function(err, files) {
+
 							result.input = files[0];
-							result.expected = files[1];
+							if(files.length === 3){
+								result.extra = files[1];
+								result.expected = files[2];
+							}else{
+								result.expected = files[1];
+							}
 
 							// Platform independent exec
 							var windows = os.platform().indexOf("win32") != -1 || os.platform().indexOf("win64") != -1;
