@@ -1,7 +1,7 @@
 # Live C++ Coding
 Live C++ coding tool, for CS106B section leading.
 
-![Screenshot](http://i.imgur.com/ir58QwE.png)
+![Screenshot](./screenshot.png)
 
 ## Features
 - Automatically runs tests on Ctrl-S / Cmd-S
